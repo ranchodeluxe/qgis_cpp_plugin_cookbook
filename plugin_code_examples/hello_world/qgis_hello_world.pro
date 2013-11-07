@@ -1,4 +1,4 @@
-#QGIS_DIR = /home/marco/src/qgis
+#QGIS_DIR = /usr/lib/qgis
 TEMPLATE = lib
 CONFIG = qt
 QT += xml qt3support

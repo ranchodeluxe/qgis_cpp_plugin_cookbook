@@ -69,21 +69,54 @@ QGISEXTERN void unload(QgisPlugin* plugin)
 
 void HelloWorldPlugin::StartOverlay()
 {
-   std::cout << "HelloWorldPlugin::StartOverlay" << std::endl;
+    std::cout << "HelloWorldPlugin::StartOverlay" << std::endl;
 
-   // get the map canvas
-   QgsMapCanvas* canvas = m_qgis_if->mapCanvas();
+    // get the map canvas
+    QgsMapCanvas* canvas = m_qgis_if->mapCanvas();
 
-   // connect to the render complete signal
-   connect(canvas, SIGNAL(renderComplete(QPainter*)),
+    // connect to the render complete signal
+    connect(canvas, SIGNAL(renderComplete(QPainter*)),
       this, SLOT(DrawOverlay(QPainter*)));
 
-   // zoom out for fun
-   canvas->zoomOut(); // wheeeeee!!!
+    // zoom out for fun
+    canvas->zoomOut(); // wheeeeee!!!
 }
 
 void HelloWorldPlugin::DrawOverlay(QPainter* painter)
 {
-   std::cout << "HelloWorldPlugin::DrawOverlay" << std::endl;
-   painter->drawRect(20, 20, 60, 60);
+    // Layer QStrings
+    QString mLayerPath         = "/home/gcorradini/Dropbox/LINUX_BASE_WORKSPACE/DATA/SHAPES/populated_places_simple/";
+    QString mLayerBaseName     = "pop_places";
+    QString mProviderName      = "ogr";
+
+    // Get Vector Layer
+    QgsVectorLayer * mLayer = new QgsVectorLayer(mLayerPath, mLayerBaseName, mProviderName);
+
+
+    if (mLayer->isValid())
+    {
+        QString mFeedback = "layer is valid";
+        QString mTag = "HelloWorld";
+        QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
+    }
+    else
+    {
+        QString mFeedback = "layer NOT valid";
+        QString mTag = "HelloWorld";
+        QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
+    }
+
+    // Add the Vector Layer to the Layer Registry
+    QgsMapLayerRegistry::instance()->addMapLayer(mLayer, TRUE);
+
+    // get the map canvas
+    QgsMapCanvas* canvas = m_qgis_if->mapCanvas();
+
+    // Add the Layer to the Layer Set
+    QList <QgsMapCanvasLayer> mLayerSet;
+    mLayerSet.append(QgsMapCanvasLayer(mLayer, TRUE));
+
+    // add it to the canvas
+    canvas->setLayerSet( mLayerSet );
+
 }

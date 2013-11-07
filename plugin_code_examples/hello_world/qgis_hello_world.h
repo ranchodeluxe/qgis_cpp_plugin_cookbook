@@ -4,6 +4,9 @@
 #include "qgisplugin.h"
 #include "qgsmapcanvas.h"
 #include "qgisinterface.h"
+#include "qgsvectorlayer.h"
+#include "qgsmessagelog.h"
+#include "qgsmaplayerregistry.h"
 #include <iostream>
 #include <QAction>
 
