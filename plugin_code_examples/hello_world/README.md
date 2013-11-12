@@ -1,8 +1,6 @@
 ###Build dependecies
 
-1. You will need QGIS installed with all it's [dependencies such as Qt, Proj4, GEOS, GDAL/OGR](http://hub.qgis.org/wiki/17/Building_QGIS_from_Source?version=2) 
-
-2. You will also need the `libqgis-dev` and `libqt4-dev` libraries
+1. You will need QGIS source and all the dependecies. The (build instructions)[https://github.com/qgis/QGIS/blob/master/INSTALL#L85-L340]you should follow are very clear.
 
 ###Building
 

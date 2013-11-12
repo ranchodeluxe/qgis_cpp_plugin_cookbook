@@ -75,24 +75,18 @@ void HelloWorldPlugin::StartOverlay()
     QgsMapCanvas* canvas = m_qgis_if->mapCanvas();
 
     // connect to the render complete signal
+    /*
     connect(canvas, SIGNAL(renderComplete(QPainter*)),
       this, SLOT(DrawOverlay(QPainter*)));
+    */
 
-    // zoom out for fun
-    canvas->zoomOut(); // wheeeeee!!!
-}
-
-void HelloWorldPlugin::DrawOverlay(QPainter* painter)
-{
     // Layer QStrings
-    QString mLayerPath         = "/home/gcorradini/Dropbox/LINUX_BASE_WORKSPACE/DATA/SHAPES/populated_places_simple/";
-    QString mLayerBaseName     = "pop_places";
+    QString mLayerPath         = "/home/junkmob/QGIS-DEV/QGIS/tests/testdata/points.shp";
+    QString mLayerBaseName     = "points";
     QString mProviderName      = "ogr";
 
     // Get Vector Layer
     QgsVectorLayer * mLayer = new QgsVectorLayer(mLayerPath, mLayerBaseName, mProviderName);
-
-
     if (mLayer->isValid())
     {
         QString mFeedback = "layer is valid";
@@ -109,14 +103,20 @@ void HelloWorldPlugin::DrawOverlay(QPainter* painter)
     // Add the Vector Layer to the Layer Registry
     QgsMapLayerRegistry::instance()->addMapLayer(mLayer, TRUE);
 
-    // get the map canvas
-    QgsMapCanvas* canvas = m_qgis_if->mapCanvas();
-
     // Add the Layer to the Layer Set
     QList <QgsMapCanvasLayer> mLayerSet;
     mLayerSet.append(QgsMapCanvasLayer(mLayer, TRUE));
 
-    // add it to the canvas
-    canvas->setLayerSet( mLayerSet );
+	// Create the Map Canvas
+	canvas->setExtent(mLayer->extent());
+	canvas->enableAntiAliasing(true);
+	canvas->setCanvasColor(QColor(255, 255, 255));
+	canvas->freeze(false);
+
+	// add it to the canvas
+	canvas->setLayerSet( mLayerSet );
+	canvas->setVisible(true);
+	canvas->refresh();
 
 }
+
