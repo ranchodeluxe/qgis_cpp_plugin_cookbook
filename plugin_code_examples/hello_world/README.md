@@ -1,6 +1,6 @@
 ###Build dependecies
 
-1. You will need QGIS source and all the dependecies. The (build instructions)[https://github.com/qgis/QGIS/blob/master/INSTALL#L85-L340]you should follow are very clear.
+1. You will need QGIS source and all the dependecies. The [build instructions](https://github.com/qgis/QGIS/blob/master/INSTALL#L85-L340) you should follow are very clear.
 
 ###Building
 
