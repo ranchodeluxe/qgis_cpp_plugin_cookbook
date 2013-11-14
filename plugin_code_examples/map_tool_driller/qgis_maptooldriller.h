@@ -38,6 +38,7 @@ public slots:
 private:
    QgisInterface* m_qgis_if;
    QAction* m_action;
+   MapToolDriller* mpDrillTool;
 
 };
 

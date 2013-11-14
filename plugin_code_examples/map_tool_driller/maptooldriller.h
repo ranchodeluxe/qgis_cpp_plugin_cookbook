@@ -31,7 +31,7 @@ class QgsMapLayer;
 class QgsRasterLayer;
 class QgsVectorLayer;
 
-class MapToolDriller : public QObject, public QgsMapTool
+class MapToolDriller : public QgsMapTool
 {
   Q_OBJECT;
 
@@ -40,6 +40,7 @@ class MapToolDriller : public QObject, public QgsMapTool
 
     ~MapToolDriller();
 
+    /*
     //! Overridden mouse move event
     virtual void canvasMoveEvent(QMouseEvent * e);
 
@@ -51,17 +52,19 @@ class MapToolDriller : public QObject, public QgsMapTool
 
     //! called when map tool is being deactivated
     virtual void deactivate();
+    */
+
+    void canvasClickHandler(const QgsPoint&);
 
     typedef QHash<QString,double> DrillResult;
+
   signals:
     void drilled(DrillResult);
 
-
-
   private:
     QHash<QString,double>  drill(const QgsPoint& myPoint);
-private slots:
 
+  private slots:
 
 };
 

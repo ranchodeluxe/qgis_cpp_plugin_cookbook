@@ -1,9 +1,10 @@
 #include "qgis_maptooldriller.h"
+#include "maptooldriller.h"
 
-/*static*/ const QString Qgis_MapToolDrillerPLugin::s_name = QObject::tr("Hello World Plugin");
+/*static*/ const QString Qgis_MapToolDrillerPLugin::s_name = QObject::tr("MapToolDrillerz");
 /*static*/ const QString Qgis_MapToolDrillerPLugin::s_description = QObject::tr("Sample Plugin");
 /*static*/ const QString Qgis_MapToolDrillerPLugin::s_category = QObject::tr("Plugins");
-/*static*/ const QString Qgis_MapToolDrillerPLugin::s_version = QObject::tr("Version 5.2.0");
+/*static*/ const QString Qgis_MapToolDrillerPLugin::s_version = QObject::tr("Version 0.1.1");
 /*static*/ const QString Qgis_MapToolDrillerPLugin::s_icon = "";
 /*static*/ const QgisPlugin::PLUGINTYPE Qgis_MapToolDrillerPLugin::s_type = QgisPlugin::UI;
 
@@ -95,13 +96,13 @@ void Qgis_MapToolDrillerPLugin::StartOverlay()
     if (mLayer->isValid())
     {
         QString mFeedback = "layer is valid";
-        QString mTag = "HelloWorld";
+        QString mTag = "MapToolDriller";
         QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
     }
     else
     {
         QString mFeedback = "layer NOT valid";
-        QString mTag = "HelloWorld";
+        QString mTag = "MapToolDriller";
         QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
     }
 
