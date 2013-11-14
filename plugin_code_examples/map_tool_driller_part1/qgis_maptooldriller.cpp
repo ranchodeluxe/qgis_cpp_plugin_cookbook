@@ -1,5 +1,6 @@
 #include "qgis_maptooldriller.h"
 #include "maptooldriller.h"
+#include "qgsmaptoolemitpoint.h"
 
 /*static*/ const QString Qgis_MapToolDrillerPLugin::s_name = QObject::tr("MapToolDrillerz");
 /*static*/ const QString Qgis_MapToolDrillerPLugin::s_description = QObject::tr("Sample Plugin");
@@ -68,23 +69,30 @@ QGISEXTERN void unload(QgisPlugin* plugin)
    m_qgis_if->addRasterToolBarIcon(m_action);
    m_qgis_if->addPluginToMenu(tr("&MapToolDriller"), m_action);
 
+  // get the emit tool
+  mEmitPointTool = new QgsMapToolEmitPoint( m_qgis_if->mapCanvas() );
+  connect( mEmitPointTool, SIGNAL( canvasClicked( const QgsPoint&, Qt::MouseButton ) ),
+               this, SLOT( handleCanvasClick( const QgsPoint& ) ) );
+
+}
+
+void Qgis_MapToolDrillerPLugin::handleCanvasClick( const QgsPoint &thePoint ) {
+    QString mTag = "MapToolDriller";
+    QString mFeedback = "inside canvasReleaseEvent";
+    QgsMessageLog::instance()->logMessage( thePoint.toString(), mTag, QgsMessageLog::INFO );
+
+    QString xy = "Emitting...";
+    QgsMessageLog::instance()->logMessage( xy, mTag, QgsMessageLog::INFO );
 }
 
 void Qgis_MapToolDrillerPLugin::StartOverlay()
 {
     std::cout << "Qgis_MapToolDrillerPLugin::StartOverlay" << std::endl;
 
-    // Connect to the render complete signal
-    /*
-    connect(canvas, SIGNAL(renderComplete(QPainter*)),
-      this, SLOT(DrawOverlay(QPainter*)));
-    */
-
     // Get the map canvas
     QgsMapCanvas* canvas = m_qgis_if->mapCanvas();
-
-    // Create the MapToolDriller
-    mpDrillTool = new MapToolDriller(canvas); 
+    // set the tool
+    canvas->setMapTool(mEmitPointTool);
 
     // Layer QStrings
     QString mLayerPath         = "/home/junkmob/QGIS-DEV/QGIS/tests/testdata/points.shp";

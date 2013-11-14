@@ -40,7 +40,6 @@ class MapToolDriller : public QgsMapTool
 
     ~MapToolDriller();
 
-    /*
     //! Overridden mouse move event
     virtual void canvasMoveEvent(QMouseEvent * e);
 
@@ -52,7 +51,6 @@ class MapToolDriller : public QgsMapTool
 
     //! called when map tool is being deactivated
     virtual void deactivate();
-    */
 
     void canvasClickHandler(const QgsPoint&);
 

@@ -36,10 +36,6 @@ MapToolDriller::MapToolDriller(QgsMapCanvas* canvas) : QgsMapTool(canvas)
   QPixmap myIdentifyQPixmap = QPixmap((const char **) identify_cursor);
   mCursor = QCursor(myIdentifyQPixmap, 1, 1);
 
-  // get the emit tool
-  QgsMapToolEmitPoint *mEmitPointTool = new QgsMapToolEmitPoint( canvas );
-  connect( mEmitPointTool, SIGNAL( canvasClicked( const QgsPoint&, Qt::MouseButton ) ),
-               this, SLOT( setFrontPoint( const QgsPoint& ) ) );
 }
     
 MapToolDriller::~MapToolDriller()
@@ -47,7 +43,6 @@ MapToolDriller::~MapToolDriller()
 
 }
 
-/*
 void MapToolDriller::canvasMoveEvent(QMouseEvent * e)
 {
 
@@ -60,18 +55,13 @@ void MapToolDriller::canvasPressEvent(QMouseEvent * e)
 
 void MapToolDriller::canvasReleaseEvent(QMouseEvent * e)
 {
-}
-*/
-
-void MapToolDriller::canvasClickHandler( const QgsPoint &thePoint )
-{
     QString mTag = "MapToolDriller";
     QString mFeedback = "inside canvasReleaseEvent";
     QgsMessageLog::instance()->logMessage( thePoint.toString(), mTag, QgsMessageLog::INFO );
 
-    //QgsPoint myPoint = mCanvas->getCoordinateTransform()->toMapCoordinates(e->x(), e->y());
+    QgsPoint myPoint = mCanvas->getCoordinateTransform()->toMapCoordinates(e->x(), e->y());
     QHash <QString,double> myHash;
-    myHash = drill(thePoint);
+    myHash = drill(myPoint);
 
     QString xy = "Emitting...";
     QgsMessageLog::instance()->logMessage( xy, mTag, QgsMessageLog::INFO );
@@ -79,15 +69,9 @@ void MapToolDriller::canvasClickHandler( const QgsPoint &thePoint )
     emit drilled(myHash);
 }
 
-
 QHash<QString,double> MapToolDriller::drill(const QgsPoint &thePoint)
 {
   QHash<QString,double> myHash;
-  //ok so here is where the real work is done
-  //we iterate through the layers in the map canvas
-  //and check if each layer is a raster
-  //if it is we add the looked up value for that raster to our 
-  //hash table
 
   QgsMapLayer* layer = mCanvas->currentLayer();
 
