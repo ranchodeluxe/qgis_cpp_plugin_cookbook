@@ -56,8 +56,10 @@ void MapToolDriller::canvasPressEvent(QMouseEvent * e)
 void MapToolDriller::canvasReleaseEvent(QMouseEvent * e)
 {
     QString mTag = "MapToolDriller";
+    /*
     QString mFeedback = "inside canvasReleaseEvent";
     QgsMessageLog::instance()->logMessage( thePoint.toString(), mTag, QgsMessageLog::INFO );
+    */
 
     QgsPoint myPoint = mCanvas->getCoordinateTransform()->toMapCoordinates(e->x(), e->y());
     QHash <QString,double> myHash;
