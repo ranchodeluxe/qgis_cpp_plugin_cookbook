@@ -1,0 +1,5 @@
+1. plugin_builder.py would be nice to have colored questions
+
+2. coordinate_capture doesn't wipe last point after using the tool ever
+
+3. whatever workflow problems are discovered in the cmake/plugin_builder workflow
