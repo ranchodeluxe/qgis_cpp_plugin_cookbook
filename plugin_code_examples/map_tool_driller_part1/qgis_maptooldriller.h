@@ -2,7 +2,7 @@
 #define QGIS_MAPTOOLDRILLER_H
 
 #include "qgsmaptoolemitpoint.h"
-#include "maptooldriller.h" // not used in part1
+#include "maptooldriller.h" // not used in part 1, we use qgismaptoolemitpoint.h instead
 #include "qgisplugin.h"
 #include "qgsmapcanvas.h"
 #include "qgisinterface.h"
