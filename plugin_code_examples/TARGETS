@@ -5,5 +5,7 @@ workflows:
 3. Subclass QgsMapTool and make a tool that emits points to logger onClick and onMove
 4. Create a first-class GUI so we don't have to log to the logger anymore and we can present feedback in popup window
 5. Build an info driller that gets all attributes for Vector or Raster layers
+6. Introduce plugin_builder with cmake workflow
+7.  
 
 
