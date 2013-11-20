@@ -21,9 +21,13 @@ with the distribution issues on your own.
 
 ### How to Use the Cookbook
 Go over to this repo's [example plugins](https://github.com/thebigspoon/qgis_cpp_plugin_cookbook/tree/gh-pages/plugin_code_examples) 
-directory and start at `01`. You get the picture.
+directory and go into `01_hello_world`.
 
 ### How to Contribute to the Cookbook
+```bash
+DISCLAIMER: Most of the recipes by the auther only cover
+building tools with gcc on Ubuntu Linux
+```
 
 1. clone the repo
 
@@ -39,13 +43,13 @@ directory and start at `01`. You get the picture.
 
 ### Current Plugin Tutorials
 
-1. Hello World ( `qmake` versus `cmake` workflows )
+1. [Hello World](https://github.com/thebigspoon/qgis_cpp_plugin_cookbook/tree/gh-pages/plugin_code_examples/01_hello_world)( `qmake` versus `cmake` workflows )
 
-2. Map Tool Driller ( part 1 )
+2. [Map Tool Driller ( part 1 )](https://github.com/thebigspoon/qgis_cpp_plugin_cookbook/tree/gh-pages/plugin_code_examples/02_map_tool_driller_part1)
 
-3. Map Tool Driller ( part 2 )
+3. [Map Tool Driller ( part 2 )](https://github.com/thebigspoon/qgis_cpp_plugin_cookbook/tree/gh-pages/plugin_code_examples/03_map_tool_driller_part2)
 
-4. Map Tool Driller ( part 3 )
+4. [Map Tool Driller ( part 3 )](https://github.com/thebigspoon/qgis_cpp_plugin_cookbook/tree/gh-pages/plugin_code_examples/04_map_tool_driller_part3)
 
 5. Map Tool Driller ( part 4 )
 
