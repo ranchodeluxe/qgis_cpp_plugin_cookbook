@@ -1,5 +1,11 @@
 #include "qgis_maptooldriller.h"
 
+#include "qgsgeometry.h"
+#include "qgsrectangle.h"
+#include "qgsfeature.h"
+#include "qgsfeaturerequest.h"
+#include "qgsfeatureiterator.h"
+
 #include <QAction>
 #include <QToolBar>
 #include <QDockWidget>
@@ -93,11 +99,13 @@ QGISEXTERN void unload(QgisPlugin* plugin)
     connect(m_action, SIGNAL(triggered()), this, SLOT(StartOverlay()));
     m_qgis_if->addPluginToMenu(tr("&MapToolDriller"), m_action);
     m_qgis_if->addVectorToolBarIcon(m_action);
-    connect( m_qgis_if, SIGNAL( currentLayerChanged( QgsMapLayer ) ), this, SLOT( currentLayerChanged( QgsMapLayer ) ) );
+
+    // connect QgisInterface.currentLayerChanged to our handler
+    connect( m_qgis_if, SIGNAL( currentLayerChanged( QgsMapLayer* ) ), this, SLOT( currentLayerChanged( QgsMapLayer * ) ) );
 
     // create our map tool
     mpMapTool = new MapToolDriller( m_qgis_if->mapCanvas() );
-    connect( mpMapTool, SIGNAL( mouseMoved( QgsPoint ) ), this, SLOT( mouseMoved( QgsPoint ) ) );
+    //connect( mpMapTool, SIGNAL( mouseMoved( QgsPoint ) ), this, SLOT( mouseMoved( QgsPoint ) ) );
     connect( mpMapTool, SIGNAL( mouseClicked( QgsPoint ) ), this, SLOT( mouseClicked( QgsPoint ) ) );
 
     // create the widget dialog
@@ -125,28 +133,19 @@ QGISEXTERN void unload(QgisPlugin* plugin)
 
 void Qgis_MapToolDrillerPLugin::currentLayerChanged( QgsMapLayer *currentLayer ) 
 {
-    QString mFeedback = "callback";
-    QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
+    QString mFeedback = "";
     if( !currentLayer ){ 
-        mFeedback = "null layer pointer";
+        mFeedback = "NULL layer pointer";
         QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
+        return;
     }
-
-    if( currentLayer->type() == QgsMapLayer::VectorLayer ) {
+    
+    if ( currentLayer->type() == QgsMapLayer::VectorLayer ) {
         mpCurrentMapLayer = dynamic_cast<QgsVectorLayer*>(currentLayer);
-        if ( mpCurrentMapLayer ) {
-            mFeedback = "currrent layer set";
-            QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
-
-            mpCurrentVectorProvider = mpCurrentMapLayer->dataProvider();
-
-            mFeedback = "provider set";
-            QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
-        }
-        mFeedback = "layer not cast";
-        QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
+        // set provider
+        mpCurrentVectorProvider = mpCurrentMapLayer->dataProvider();
     }
-    else {
+    else if( currentLayer->type() == QgsMapLayer::RasterLayer ) {
         mFeedback = "raster layers not supported yet";
         QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
     }
@@ -155,9 +154,61 @@ void Qgis_MapToolDrillerPLugin::currentLayerChanged( QgsMapLayer *currentLayer )
 
 void Qgis_MapToolDrillerPLugin::mouseClicked( QgsPoint thePoint )
 {
+    /*
     QString mFeedback = thePoint.toString();
     QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
     mpFeedbackEdit->setText( mFeedback );
+    */
+    // Get the map canvas
+    QString mFeedback = "";
+    QgsMapCanvas* canvas = m_qgis_if->mapCanvas();
+
+    QgsGeometry *geom = QgsGeometry::fromPoint( thePoint );
+    QgsGeometry *buff = geom->buffer( ( canvas->mapUnitsPerPixel() * 20 ), 0 );
+    QgsRectangle rect = buff->boundingBox();
+    if( !mpCurrentMapLayer ) {
+        //QMessageBox.information( self.iface.mainWindow(),"Info", "No layer currently selected in TOC" )
+        mFeedback = "current layer is NULL";
+        QgsMessageLog::instance()->logMessage( mFeedback , mTag, QgsMessageLog::INFO );
+        return;
+    }
+
+    QgsFeatureRequest *featRequest = new QgsFeatureRequest( rect );
+    QgsFeatureIterator iter = mpCurrentVectorProvider->getFeatures( *featRequest );
+    QgsFeature feat;
+    while( iter.nextFeature( feat ) ) {
+        QgsGeometry *g = feat.geometry();
+        if ( g->intersects( rect ) ) {
+            QString s = QString::number( feat.id() );
+            QgsMessageLog::instance()->logMessage( s, mTag, QgsMessageLog::INFO );
+        }
+    }
+
+    /*
+    self.selectList = []
+    #QMessageBox.information( self.iface.mainWindow(),"Info", "in selectFeature function" )
+    # setup the provider select to filter results based on a rectangle
+    pntGeom = QgsGeometry.fromPoint(point)  
+    # scale-dependent buffer of 2 pixels-worth of map units
+    pntBuff = pntGeom.buffer( (self.canvas.mapUnitsPerPixel() * 2),0) 
+    rect = pntBuff.boundingBox()
+    if self.cLayer:
+        feat = QgsFeature()
+        # create the select statement
+        self.provider.select([],rect) # the arguments mean no attributes returned, and do a bbox filter with our buffered rectangle to limit the amount of features
+        while self.provider.nextFeature(feat):
+            # if the feat geom returned from the selection intersects our point then put it in a list
+            if feat.geometry().intersects(pntGeom):
+                self.selectList.append(feat.id())
+
+        if self.selectList:
+            # make the actual selection
+            self.cLayer.setSelectedFeatures(self.selectList)
+            # update the TextBrowser
+            self.updateTextBrowser()
+    else:
+    */
+
 }
 void Qgis_MapToolDrillerPLugin::mouseMoved( QgsPoint thePoint )
 {

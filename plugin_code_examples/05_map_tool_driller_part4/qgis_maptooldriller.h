@@ -86,6 +86,8 @@ private:
 
     QgsVectorDataProvider* mpCurrentVectorProvider;
 
+    QgsLegendInterface* mpLegendInterface;
+
 };
 
 #endif // #ifndef QGIS_MAPTOOLDRILLER_H
