@@ -66,6 +66,9 @@ public slots:
     //! Called when QgisInterface.currentLayerChanged
     void currentLayerChanged( QgsMapLayer* currentLayer );
 
+    //! triggered after new selection is fired
+    void selectionChanged(QgsFeatureIds, QgsFeatureIds, bool);
+
     void StartOverlay();
 
 private:

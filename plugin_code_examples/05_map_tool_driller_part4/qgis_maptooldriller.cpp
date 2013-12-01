@@ -192,30 +192,35 @@ void Qgis_MapToolDrillerPLugin::mouseClicked( QgsPoint thePoint )
     QgsFeatureRequest *featRequest = new QgsFeatureRequest( rect );
     QgsFeatureIterator iter = mpCurrentVectorProvider->getFeatures( *featRequest );
     QgsFeature feat;
+    mpFeatureIds.clear(); 
     while( iter.nextFeature( feat ) ) {
         QgsGeometry *g = feat.geometry();
         if ( g->intersects( rect ) ) {
-            //QString s = QString::number( feat.id() );
-            //QgsMessageLog::instance()->logMessage( s, mTag, QgsMessageLog::INFO );
             mpFeatureIds.insert( feat.id() );
         }
     }
 
     if ( mpFeatureIds.count() > 0 ) {
-        mpCurrentMapLayer.setSelectedFeatures( mpFeatureIds );
+        mpCurrentMapLayer->setSelectedFeatures( mpFeatureIds );
+        QgsMessageLog::instance()->logMessage( tr("setSelectedFeatures called"), mTag, QgsMessageLog::INFO );
     }
 
 }
 
 void Qgis_MapToolDrillerPLugin::selectionChanged( const QgsFeatureIds selected, const QgsFeatureIds deselected, const bool clearAndSelect )
 {
-
     if( mpFeatureIds.count() == 0 ) return;
-    
     QString fieldName = "Class";
-    int fieldIndx = mpCurrentMapLayer.fieldNameIndex( fieldName );
+    int fieldIndx = mpCurrentMapLayer->fieldNameIndex( fieldName );
 
-
+    QgsFeatureRequest featRequest = QgsFeatureRequest().setFilterFids( mpFeatureIds );
+    QgsFeatureIterator iter = mpCurrentMapLayer->getFeatures( featRequest );
+    QgsFeature feat;
+    while( iter.nextFeature( feat ) ) {
+        QgsAttributes attrs = feat.attributes();
+        QString class_value = attrs[ fieldIndx ].toString();
+        mpFeedbackEdit->setText( class_value );
+    }
 }
 
 void Qgis_MapToolDrillerPLugin::mouseMoved( QgsPoint thePoint )
