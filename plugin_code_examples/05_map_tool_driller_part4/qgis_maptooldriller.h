@@ -88,6 +88,8 @@ private:
 
     QgsLegendInterface* mpLegendInterface;
 
+    QgsFeatureIds mpFeatureIds;
+
 };
 
 #endif // #ifndef QGIS_MAPTOOLDRILLER_H

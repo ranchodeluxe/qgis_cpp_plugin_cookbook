@@ -141,7 +141,23 @@ void Qgis_MapToolDrillerPLugin::currentLayerChanged( QgsMapLayer *currentLayer )
     }
     
     if ( currentLayer->type() == QgsMapLayer::VectorLayer ) {
+        // remove mpCurrentMapLayer's setSelected event handler
+        try {
+            disconnect( this, SLOT( selectionChanged( const QgsFeatureIds, const QgsFeatureIds, const bool ) ) );
+        }
+        catch (...) {
+            mFeedback = "could not disconnect this object from selectionChanged event";
+            QgsMessageLog::instance()->logMessage( mFeedback, mTag, QgsMessageLog::INFO );
+        }
+        
+        // cast the current layer to our vector layer ref
         mpCurrentMapLayer = dynamic_cast<QgsVectorLayer*>(currentLayer);
+        connect( mpCurrentMapLayer, 
+            SIGNAL( selectionChanged( const QgsFeatureIds, const QgsFeatureIds, const bool ) ), 
+            this, 
+            SLOT( selectionChanged( const QgsFeatureIds, const QgsFeatureIds, const bool ) ) 
+        );
+
         // set provider
         mpCurrentVectorProvider = mpCurrentMapLayer->dataProvider();
     }
@@ -179,37 +195,29 @@ void Qgis_MapToolDrillerPLugin::mouseClicked( QgsPoint thePoint )
     while( iter.nextFeature( feat ) ) {
         QgsGeometry *g = feat.geometry();
         if ( g->intersects( rect ) ) {
-            QString s = QString::number( feat.id() );
-            QgsMessageLog::instance()->logMessage( s, mTag, QgsMessageLog::INFO );
+            //QString s = QString::number( feat.id() );
+            //QgsMessageLog::instance()->logMessage( s, mTag, QgsMessageLog::INFO );
+            mpFeatureIds.insert( feat.id() );
         }
     }
 
-    /*
-    self.selectList = []
-    #QMessageBox.information( self.iface.mainWindow(),"Info", "in selectFeature function" )
-    # setup the provider select to filter results based on a rectangle
-    pntGeom = QgsGeometry.fromPoint(point)  
-    # scale-dependent buffer of 2 pixels-worth of map units
-    pntBuff = pntGeom.buffer( (self.canvas.mapUnitsPerPixel() * 2),0) 
-    rect = pntBuff.boundingBox()
-    if self.cLayer:
-        feat = QgsFeature()
-        # create the select statement
-        self.provider.select([],rect) # the arguments mean no attributes returned, and do a bbox filter with our buffered rectangle to limit the amount of features
-        while self.provider.nextFeature(feat):
-            # if the feat geom returned from the selection intersects our point then put it in a list
-            if feat.geometry().intersects(pntGeom):
-                self.selectList.append(feat.id())
-
-        if self.selectList:
-            # make the actual selection
-            self.cLayer.setSelectedFeatures(self.selectList)
-            # update the TextBrowser
-            self.updateTextBrowser()
-    else:
-    */
+    if ( mpFeatureIds.count() > 0 ) {
+        mpCurrentMapLayer.setSelectedFeatures( mpFeatureIds );
+    }
 
 }
+
+void Qgis_MapToolDrillerPLugin::selectionChanged( const QgsFeatureIds selected, const QgsFeatureIds deselected, const bool clearAndSelect )
+{
+
+    if( mpFeatureIds.count() == 0 ) return;
+    
+    QString fieldName = "Class";
+    int fieldIndx = mpCurrentMapLayer.fieldNameIndex( fieldName );
+
+
+}
+
 void Qgis_MapToolDrillerPLugin::mouseMoved( QgsPoint thePoint )
 {
     QString mFeedback = thePoint.toString();
